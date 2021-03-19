@@ -4,15 +4,14 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WbCloudy
-import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androiddevchallenge.domain.Weather
+import com.example.androiddevchallenge.extensions.image
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 @Composable
@@ -48,10 +47,7 @@ private fun MainContent(weather: Weather) {
 @Composable
 private fun WeatherIcon(weather: Weather) {
     Icon(
-        imageVector = when (weather) {
-            Weather.SUNNY -> Icons.Filled.WbSunny
-            Weather.CLOUDY -> Icons.Filled.WbCloudy
-        },
+        painter = painterResource(id = weather.image),
         contentDescription = "TODO",
     )
 }
@@ -60,7 +56,7 @@ private fun WeatherIcon(weather: Weather) {
 @Composable
 fun LightPreview() {
     MyTheme {
-        MainContent(weather = Weather.CLOUDY)
+        MainContent(weather = Weather.CLOUD)
     }
 }
 
@@ -68,6 +64,6 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MainContent(weather = Weather.CLOUDY)
+        MainContent(weather = Weather.CLOUD)
     }
 }

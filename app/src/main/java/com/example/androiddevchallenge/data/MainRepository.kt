@@ -12,8 +12,7 @@ import javax.inject.Inject
 class MainRepository @Inject constructor() {
 
     private val fakeData = listOf(
-        Either.Right(Weather.CLOUDY),
-        Either.Right(Weather.SUNNY),
+        Either.Right(Weather.values().random()),
         Either.Left(TimeoutException()),
     )
 

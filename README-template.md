@@ -13,6 +13,13 @@
 <!--- Optionally point readers to interesting parts of your submission. -->
 <!--- What are you especially proud of? -->
 
+Used:
+    - Flow
+    - Hilt
+Icon Set:
+    - Charlotte de Wolfe
+    - https://dribbble.com/shots/14189824-Weather-Icons-Imminent-35-Icon-Free-Download
+
 
 ## :camera_flash: Screenshots
 <!-- You can add more screenshots here if you like -->
