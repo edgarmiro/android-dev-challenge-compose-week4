@@ -7,8 +7,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.util.concurrent.TimeoutException
+import javax.inject.Inject
 
-class MainRepository {
+class MainRepository @Inject constructor() {
 
     private val fakeData = listOf(
         Either.Right(Weather.CLOUDY),

@@ -16,7 +16,7 @@ import com.example.androiddevchallenge.domain.Weather
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModelFactory())) {
+fun MainScreen(viewModel: MainViewModel = viewModel()) {
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is WeatherUiState.Loading -> MainLoadingContent()
         is WeatherUiState.Error -> MainErrorContent(throwable = uiState.throwable)
