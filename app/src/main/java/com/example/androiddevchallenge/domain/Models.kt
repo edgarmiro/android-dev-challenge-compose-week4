@@ -14,3 +14,5 @@ enum class Weather {
     WIND,
     WINTERY_MIX,
 }
+
+data class Forecast(val day: String, val weather: Weather)

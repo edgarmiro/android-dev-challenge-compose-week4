@@ -17,9 +17,21 @@ package com.example.androiddevchallenge.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.example.androiddevchallenge.R
+
+val GreatVibes = FontFamily(
+    Font(R.font.greatvibes_regular, FontWeight.Normal),
+)
+
+val NotoSerif = FontFamily(
+    Font(R.font.noto_serif_regular, FontWeight.Normal),
+    Font(R.font.noto_serif_bold, FontWeight.Bold),
+)
 
 // Set of Material typography styles to start with
 val typography = Typography(
@@ -27,17 +39,33 @@ val typography = Typography(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
-    )
-        /* Other default text styles to override
-    button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
-        fontSize = 14.sp
     ),
-    caption = TextStyle(
-        fontFamily = FontFamily.Default,
+    h1 = TextStyle(
+        fontFamily = GreatVibes,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 36.sp,
+        letterSpacing = 0.041.em,
+    ),
+    h2 = TextStyle(
+        fontFamily = NotoSerif,
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp,
+    ),
+    h3 = TextStyle(
+        fontFamily = NotoSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
     )
-    */
+    /* Other default text styles to override
+button = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.W500,
+    fontSize = 14.sp
+),
+caption = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Normal,
+    fontSize = 12.sp
+)
+*/
 )

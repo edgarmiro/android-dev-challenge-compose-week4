@@ -18,3 +18,19 @@ val Weather.image: Int
         Weather.WIND -> R.drawable.ic_wind
         Weather.WINTERY_MIX -> R.drawable.ic_winterymix
     }
+
+val Weather.description: String
+    get() = when (this) {
+        Weather.SUN -> "Sunny"
+        Weather.CLOUD -> "Cloudy"
+        Weather.FOG -> "Foggy"
+        Weather.HAIL -> "Hail"
+        Weather.MOON -> "Moon"
+        Weather.RAIN_HEAVY -> "Heavy rain"
+        Weather.RAIN_LIGHT -> "Light rain"
+        Weather.RAIN_MEDIUM -> "Medium rain"
+        Weather.THUNDER -> "Stormy"
+        Weather.SNOW -> "Snowy"
+        Weather.WIND -> "Windy"
+        Weather.WINTERY_MIX -> "Wintery mix"
+    }

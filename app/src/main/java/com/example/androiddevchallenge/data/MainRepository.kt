@@ -13,7 +13,7 @@ class MainRepository @Inject constructor() {
 
     private val fakeData = listOf(
         Either.Right(Weather.values().random()),
-        Either.Left(TimeoutException()),
+//        Either.Left(TimeoutException()),
     )
 
     val weather = flow<Either<Throwable, Weather>> {

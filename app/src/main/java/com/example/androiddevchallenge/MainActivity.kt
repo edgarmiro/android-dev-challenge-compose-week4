@@ -19,6 +19,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.example.androiddevchallenge.ui.screens.MainScreen
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,8 +30,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyTheme {
-                MyApp()
+            val darkTheme = remember { mutableStateOf(false) }
+
+            MyTheme(darkTheme.value) {
+                MyApp {
+                    darkTheme.value = !darkTheme.value
+                }
             }
         }
     }
@@ -37,6 +43,6 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
-    MainScreen()
+fun MyApp(onChangeTheme: () -> Unit) {
+    MainScreen(onChangeTheme = onChangeTheme)
 }
