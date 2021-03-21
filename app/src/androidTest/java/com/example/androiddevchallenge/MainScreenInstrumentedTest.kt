@@ -15,24 +15,39 @@
  */
 package com.example.androiddevchallenge
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.androiddevchallenge.ui.screens.MainScreen
+import com.example.androiddevchallenge.ui.screens.MainViewModel
+import com.example.androiddevchallenge.ui.screens.WeatherUiState
+import com.example.androiddevchallenge.ui.theme.MyTheme
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class MainScreenInstrumentedTest {
+
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
+    private val viewModel = mockk<MainViewModel>()
+
     @Test
-    fun sampleTest() {
-        // Add instrumented tests here
+    fun show_the_loading() {
+        every { viewModel.uiState } returns MutableStateFlow(WeatherUiState.Loading)
+
+        composeTestRule.setContent {
+            MyTheme {
+                MainScreen(viewModel)
+            }
+        }
+
+        composeTestRule.onNodeWithText("Loading...").assertIsDisplayed()
     }
 }

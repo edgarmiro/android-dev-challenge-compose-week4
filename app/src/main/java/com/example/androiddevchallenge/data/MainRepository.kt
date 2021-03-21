@@ -28,7 +28,7 @@ class MainRepository @Inject constructor(fakeDataGenerator: FakeDataGenerator) {
 
     private val fakeData2 = listOf(
         Either.Right(fakeDataGenerator.data),
-        Either.Left(TimeoutException()),
+//        Either.Left(TimeoutException()),
     )
 
     val forecast = flow<Either<Throwable, List<Forecast>>> {

@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.TimeoutException
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = viewModel(), onChangeTheme: () -> Unit) {
+fun MainScreen(viewModel: MainViewModel = viewModel(), onChangeTheme: () -> Unit = {}) {
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is WeatherUiState.Loading -> MainLoadingContent()
         is WeatherUiState.Error -> MainErrorContent(
