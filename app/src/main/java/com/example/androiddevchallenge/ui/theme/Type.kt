@@ -33,6 +33,11 @@ val NotoSerif = FontFamily(
     Font(R.font.noto_serif_bold, FontWeight.Bold),
 )
 
+val Lora = FontFamily(
+    Font(R.font.lora_regular, FontWeight.Normal),
+    Font(R.font.lora_semibold, FontWeight.SemiBold),
+)
+
 // Set of Material typography styles to start with
 val typography = Typography(
     body1 = TextStyle(
@@ -55,6 +60,16 @@ val typography = Typography(
         fontFamily = NotoSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
+    ),
+    h4 = TextStyle(
+        fontFamily = Lora,
+        fontWeight = FontWeight.W400,
+        fontSize = 14.sp,
+    ),
+    h5 = TextStyle(
+        fontFamily = Lora,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
     )
     /* Other default text styles to override
 button = TextStyle(

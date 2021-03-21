@@ -15,24 +15,27 @@
  */
 package com.example.androiddevchallenge.data
 
-import com.example.androiddevchallenge.common.Either
+import com.example.androiddevchallenge.domain.Condition
 import com.example.androiddevchallenge.domain.Forecast
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import java.util.concurrent.TimeoutException
+import java.util.Calendar
 import javax.inject.Inject
 
-class MainRepository @Inject constructor(fakeDataGenerator: FakeDataGenerator) {
+class FakeDataGenerator @Inject constructor() {
 
-    private val fakeData2 = listOf(
-        Either.Right(fakeDataGenerator.data),
-        Either.Left(TimeoutException()),
-    )
+    val data: List<Forecast>
+        get() {
+            val calendar = Calendar.getInstance()
 
-    val forecast = flow<Either<Throwable, List<Forecast>>> {
-        delay((1000L..2000L).random())
-        emit(fakeData2.random())
-    }.flowOn(Dispatchers.IO)
+            return (1..7).map {
+                val date = calendar.time
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+
+                val condition = Condition.values().random()
+                val min = (0..8).random()
+                val max = (9..20).random()
+                val current = (min..max).random()
+
+                Forecast(date, condition, min, max, current)
+            }
+        }
 }

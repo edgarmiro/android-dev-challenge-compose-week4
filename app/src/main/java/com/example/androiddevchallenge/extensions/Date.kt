@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.androiddevchallenge.domain
+package com.example.androiddevchallenge.extensions
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
-enum class Condition {
-    CLOUD,
-    FOG,
-    HAIL,
-    MOON,
-    RAIN_HEAVY,
-    RAIN_LIGHT,
-    RAIN_MEDIUM,
-    THUNDER,
-    SNOW,
-    SUN,
-    WIND,
-    WINTERY_MIX,
-}
+val Date.dayName: String
+    get() = Locale.getDefault().let {
+        val df = SimpleDateFormat("EEEE", it)
 
-data class Forecast(
-    val date: Date,
-    val condition: Condition,
-    val min: Int,
-    val max: Int,
-    val current: Int,
-)
+        return df.format(this).capitalize(it)
+    }
+
+val Date.formattedDate: String
+    get() = Locale.getDefault().let {
+        val df = DateFormat.getDateInstance(DateFormat.LONG, it)
+
+        return df.format(this).capitalize(it)
+    }

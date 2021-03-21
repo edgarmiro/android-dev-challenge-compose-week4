@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge.ui.screens
 
 import androidx.compose.foundation.clickable
@@ -18,6 +33,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -34,31 +50,35 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androiddevchallenge.data.FakeDataGenerator
 import com.example.androiddevchallenge.domain.Forecast
-import com.example.androiddevchallenge.domain.Weather
+import com.example.androiddevchallenge.extensions.dayName
 import com.example.androiddevchallenge.extensions.description
+import com.example.androiddevchallenge.extensions.formattedDate
 import com.example.androiddevchallenge.extensions.image
 import com.example.androiddevchallenge.ui.theme.MyTheme
 import com.example.androiddevchallenge.ui.theme.shapes
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeoutException
 
 @Composable
 fun MainScreen(viewModel: MainViewModel = viewModel(), onChangeTheme: () -> Unit) {
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is WeatherUiState.Loading -> MainLoadingContent()
-        is WeatherUiState.Error -> MainErrorContent(throwable = uiState.throwable)
+        is WeatherUiState.Error -> MainErrorContent(
+            throwable = uiState.throwable,
+            onRetryClick = viewModel::getForecast
+        )
         is WeatherUiState.Success -> MainContent(
-            weather = uiState.weather,
-            forecast = forecast,
+            current = uiState.forecast.first(),
+            forecast = uiState.forecast.drop(1),
             onChangeTheme = onChangeTheme
         )
     }
@@ -72,26 +92,32 @@ private fun MainLoadingContent() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Loading", color = Color.Gray)
+            Text(text = "Loading...", style = MaterialTheme.typography.h1)
         }
     }
 }
 
 @Composable
-private fun MainErrorContent(throwable: Throwable) {
+private fun MainErrorContent(throwable: Throwable, onRetryClick: () -> Unit) {
     Surface(color = MaterialTheme.colors.background) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = throwable.javaClass.simpleName, color = Color.Red)
+            Text(text = throwable.javaClass.simpleName, style = MaterialTheme.typography.h1)
+            Button(
+                modifier = Modifier.padding(top = 8.dp),
+                onClick = onRetryClick
+            ) {
+                Text(text = "Retry")
+            }
         }
     }
 }
 
 @Composable
-private fun MainContent(weather: Weather, forecast: List<Forecast>, onChangeTheme: () -> Unit) {
+private fun MainContent(current: Forecast, forecast: List<Forecast>, onChangeTheme: () -> Unit) {
     Backdrop(onChangeTheme = onChangeTheme) {
         Surface(color = MaterialTheme.colors.background) {
             Box(
@@ -99,23 +125,33 @@ private fun MainContent(weather: Weather, forecast: List<Forecast>, onChangeThem
             ) {
                 Column(Modifier.fillMaxWidth()) {
                     MainWeather(
-                        weather = weather,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        forecast = current,
                     )
                     MainTemperature(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp)
+                            .padding(top = 16.dp),
+                        forecast = current,
                     )
                 }
-                LazyRow(
-                    modifier = Modifier
+                Column(
+                    Modifier
                         .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    contentPadding = PaddingValues(all = 2.dp)
+                        .align(Alignment.BottomCenter)
                 ) {
-                    items(forecast) {
-                        ForecastItem(it)
+                    Text(
+                        text = "Next days",
+                        style = MaterialTheme.typography.h2,
+                        modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
+                    )
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(all = 2.dp)
+                    ) {
+                        items(forecast) {
+                            ForecastItem(it)
+                        }
                     }
                 }
             }
@@ -124,7 +160,7 @@ private fun MainContent(weather: Weather, forecast: List<Forecast>, onChangeThem
 }
 
 @Composable
-private fun MainWeather(weather: Weather, modifier: Modifier = Modifier) {
+private fun MainWeather(forecast: Forecast, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.clip(shape = MaterialTheme.shapes.large),
         elevation = 4.dp,
@@ -135,24 +171,24 @@ private fun MainWeather(weather: Weather, modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Saturday",
+                text = forecast.date.dayName,
                 style = MaterialTheme.typography.h2,
                 modifier = Modifier.padding(top = 16.dp),
             )
             Text(
-                text = "March 20, 2021",
+                text = forecast.date.formattedDate,
                 style = MaterialTheme.typography.h3,
                 modifier = Modifier.padding(top = 8.dp),
             )
             Icon(
-                painter = painterResource(id = weather.image),
+                painter = painterResource(id = forecast.condition.image),
                 modifier = Modifier
                     .size(200.dp)
                     .padding(vertical = 4.dp),
-                contentDescription = weather.description,
+                contentDescription = forecast.condition.description,
             )
             Text(
-                text = weather.description,
+                text = forecast.condition.description,
                 style = MaterialTheme.typography.h1,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
@@ -161,7 +197,7 @@ private fun MainWeather(weather: Weather, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun MainTemperature(modifier: Modifier = Modifier) {
+private fun MainTemperature(modifier: Modifier = Modifier, forecast: Forecast) {
     Card(
         modifier = modifier
             .clip(shape = MaterialTheme.shapes.medium),
@@ -175,7 +211,7 @@ private fun MainTemperature(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Text(
-                text = "11ºC",
+                text = "${forecast.current}ºC",
                 fontSize = 40.sp,
                 style = MaterialTheme.typography.h1,
             )
@@ -183,14 +219,28 @@ private fun MainTemperature(modifier: Modifier = Modifier) {
                 Row(
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "MIN", fontSize = 14.sp, modifier = Modifier.width(64.dp))
-                    Text(text = "2ºC", fontSize = 14.sp)
+                    Text(
+                        text = "MIN",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.width(64.dp)
+                    )
+                    Text(
+                        text = "${forecast.min}ºC",
+                        style = MaterialTheme.typography.h4
+                    )
                 }
                 Row(
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = "MAX", fontSize = 14.sp, modifier = Modifier.width(64.dp))
-                    Text(text = "14ºC", fontSize = 14.sp)
+                    Text(
+                        text = "MAX",
+                        style = MaterialTheme.typography.h5,
+                        modifier = Modifier.width(64.dp)
+                    )
+                    Text(
+                        text = "${forecast.max}ºC",
+                        style = MaterialTheme.typography.h4
+                    )
                 }
             }
         }
@@ -211,36 +261,48 @@ private fun ForecastItem(forecast: Forecast) {
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp),
         ) {
             Text(
-                text = forecast.day,
+                text = forecast.date.dayName,
                 style = MaterialTheme.typography.h3,
             )
             Icon(
-                painter = painterResource(id = forecast.weather.image),
+                painter = painterResource(id = forecast.condition.image),
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .size(56.dp),
-                contentDescription = forecast.weather.description,
+                contentDescription = forecast.condition.description,
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(text = "2ºC", fontSize = 14.sp)
-                Text(text = "13ºC", fontSize = 14.sp)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(text = "MIN", fontSize = 14.sp)
-                Text(text = "MAX", fontSize = 14.sp)
-            }
             Text(
-                text = forecast.weather.description,
+                text = forecast.condition.description,
                 style = MaterialTheme.typography.h1,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 8.dp),
+                fontSize = 20.sp,
+                modifier = Modifier.padding(vertical = 8.dp),
             )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "${forecast.min}ºC",
+                    style = MaterialTheme.typography.h4,
+                )
+                Text(
+                    text = "${forecast.max}ºC",
+                    style = MaterialTheme.typography.h4,
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "MIN",
+                    style = MaterialTheme.typography.h5,
+                )
+                Text(
+                    text = "MAX",
+                    style = MaterialTheme.typography.h5,
+                )
+            }
         }
     }
 }
@@ -262,15 +324,15 @@ private fun Backdrop(onChangeTheme: () -> Unit, frontLayerContent: @Composable (
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BackdropAppBar(backdropState: BackdropScaffoldState) {
-    val selectedCity = remember { mutableStateOf("Alcoy") }
+    val selectedCity = remember { mutableStateOf("New York") }
     val scope = rememberCoroutineScope()
 
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = selectedCity.value,
         textAlign = TextAlign.Center,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
+        style = MaterialTheme.typography.h1,
+        fontSize = 30.sp,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
@@ -300,29 +362,60 @@ private fun BackdropBackContent(onChangeTheme: () -> Unit) {
     ) {
         Row {
             Text("Dark mode", modifier = Modifier.width(100.dp))
-            Switch(checked = darkModeSelected.value, onCheckedChange = {
-                darkModeSelected.value = !darkModeSelected.value
-                onChangeTheme()
-            })
+            Switch(
+                checked = darkModeSelected.value,
+                onCheckedChange = {
+                    darkModeSelected.value = !darkModeSelected.value
+                    onChangeTheme()
+                }
+            )
         }
     }
 }
 
-val forecast = listOf(
-    Forecast("Monday", Weather.RAIN_HEAVY),
-    Forecast("Tuesday", Weather.RAIN_MEDIUM),
-    Forecast("Wednesday", Weather.RAIN_LIGHT),
-    Forecast("Thursday", Weather.CLOUD),
-    Forecast("Friday", Weather.FOG),
-    Forecast("Saturday", Weather.THUNDER),
-    Forecast("Sunday", Weather.SUN),
-)
+val fakeData: List<Forecast>
+    get() {
+        val generator = FakeDataGenerator()
+        return generator.data
+    }
+
+@Preview("Loading Light Theme", device = Devices.PIXEL_4)
+@Composable
+fun LoadingLightPreview() {
+    MyTheme {
+        MainLoadingContent()
+    }
+}
+
+@Preview("Loading Dark Theme", device = Devices.PIXEL_4)
+@Composable
+fun LoadingDarkPreview() {
+    MyTheme(darkTheme = true) {
+        MainLoadingContent()
+    }
+}
+
+@Preview("Error Light Theme", device = Devices.PIXEL_4)
+@Composable
+fun ErrorLightPreview() {
+    MyTheme {
+        MainErrorContent(TimeoutException()) {}
+    }
+}
+
+@Preview("Error Dark Theme", device = Devices.PIXEL_4)
+@Composable
+fun ErrorDarkPreview() {
+    MyTheme(darkTheme = true) {
+        MainErrorContent(TimeoutException()) {}
+    }
+}
 
 @Preview("Light Theme", device = Devices.PIXEL_4)
 @Composable
 fun LightPreview() {
     MyTheme {
-        MainContent(weather = Weather.CLOUD, forecast = forecast) {}
+        MainContent(current = fakeData.first(), forecast = fakeData) {}
     }
 }
 
@@ -330,7 +423,7 @@ fun LightPreview() {
 @Composable
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
-        MainContent(weather = Weather.CLOUD, forecast = forecast) {}
+        MainContent(current = fakeData.first(), forecast = fakeData) {}
     }
 }
 
@@ -338,7 +431,7 @@ fun DarkPreview() {
 @Composable
 fun ForecastLightPreview() {
     MyTheme {
-        ForecastItem(forecast = Forecast("Monday", Weather.FOG))
+        ForecastItem(forecast = fakeData.first())
     }
 }
 
@@ -346,7 +439,7 @@ fun ForecastLightPreview() {
 @Composable
 fun FoecastDarkPreview() {
     MyTheme(darkTheme = true) {
-        ForecastItem(forecast = Forecast("Monday", Weather.FOG))
+        ForecastItem(forecast = fakeData.first())
     }
 }
 
@@ -357,7 +450,8 @@ fun TemperatureLightPreview() {
         MainTemperature(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp)
+                .padding(top = 8.dp),
+            forecast = fakeData.first()
         )
     }
 }
