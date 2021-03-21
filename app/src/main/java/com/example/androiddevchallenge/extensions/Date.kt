@@ -33,3 +33,6 @@ val Date.formattedDate: String
 
         return df.format(this).capitalize(it)
     }
+
+val Date.contentDescription: String
+    get() = "$formattedDate, $dayName"

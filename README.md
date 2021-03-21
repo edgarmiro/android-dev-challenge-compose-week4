@@ -1,27 +1,43 @@
-# Template repository
+# The Weather App
 
-Template repository for the Jetpack Compose [#AndroidDevChallenge](https://developer.android.com/dev-challenge).
+<!--- Replace <OWNER> with your Github Username and <REPOSITORY> with the name of your repository. -->
+<!--- You can find both of these in the url bar when you open your repository in github. -->
+![Workflow result](https://github.com/edgarmiro/android-dev-challenge-compose-week4/workflows/Check/badge.svg)
 
-## Getting started
-Copy this repository by pressing the "Use this template" button in Github.
-Clone your repository and open it in the latest [Android Studio (Canary build)](https://developer.android.com/studio/preview).
 
-## Submission requirements
-- Follow the challenge description on the project website: [developer.android.com/dev-challenge](https://developer.android.com/dev-challenge)
-- All UI should be written using Jetpack Compose
-- The Github Actions workflow should complete successfully
-- Include two screenshots of your submission in the [results](results) folder. The names should be
-  screenshot_1.png and screenshot_2.png.
-- Include a screen record of your submission in the [results](results) folder. The name should be
-  video.mp4
-- Replace the contents of [README.md](README.md) with the contents of [README-template.md](README-template.md) and fill out the template.
+## :scroll: Description
+The Weather App is an application created to participate in the #AndroidDevChallenge.
+I tried following a minimalist style adding the most value as possible.
+You can change the theme using the Backdrop.
 
-## Code formatting
-The CI uses [Spotless](https://github.com/diffplug/spotless) to check if your code is formatted correctly and contains the right licenses.
-Internally, Spotless uses [ktlint](https://github.com/pinterest/ktlint) to check the formatting of your code.
-To set up ktlint correctly with Android Studio, follow one of the [listed setup options](https://github.com/pinterest/ktlint#-with-intellij-idea).
+## :bulb: Motivation and Context
+The Weather App follows the Accessibility recommendations for Jetpack Compose and it's available in two languages:
+- English
+- Spanish
 
-Before committing your code, run `./gradlew app:spotlessApply` to automatically format your code.
+Data is randomly generated and returned from the repository using Flow.
+The app handles three states: Loading/Error/Success. Each possible way has been tested.
+
+Used libraries:
+- Flow
+- Hilt
+- Mockk
+- Joda-Time
+Icon Set:
+- Charlotte de Wolfe
+- https://dribbble.com/shots/14189824-Weather-Icons-Imminent-35-Icon-Free-Download
+Fonts:
+- Great Vibes: https://fonts.google.com/specimen/Great+Vibes
+- Noto Serif: https://fonts.google.com/specimen/Noto+Serif
+- Lora: https://fonts.google.com/specimen/Lora
+Colors:
+- https://www.schemecolor.com/vintage-newspaper.php
+
+## :camera_flash: Screenshots
+<!-- You can add more screenshots here if you like -->
+<img src="/results/screenshot_1.png" width="260">&emsp;<img src="/results/screenshot_2.png" width="260">
+<img src="/results/screenshot_3.png" width="260">&emsp;<img src="/results/screenshot_4.png" width="260">
+<img src="/results/screenshot_5.png" width="260">&emsp;<img src="/results/screenshot_6.png" width="260">
 
 ## License
 ```

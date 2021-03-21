@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(fakeDataGenerator: FakeDataGenerator) {

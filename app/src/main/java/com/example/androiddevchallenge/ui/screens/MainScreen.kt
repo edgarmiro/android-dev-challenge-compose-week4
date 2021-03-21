@@ -50,15 +50,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androiddevchallenge.R
 import com.example.androiddevchallenge.data.FakeDataGenerator
 import com.example.androiddevchallenge.domain.Forecast
+import com.example.androiddevchallenge.extensions.contentDescription
 import com.example.androiddevchallenge.extensions.dayName
 import com.example.androiddevchallenge.extensions.description
 import com.example.androiddevchallenge.extensions.formattedDate
@@ -92,7 +98,7 @@ private fun MainLoadingContent() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Loading...", style = MaterialTheme.typography.h1)
+            Text(text = stringResource(id = R.string.loading), style = MaterialTheme.typography.h1)
         }
     }
 }
@@ -110,7 +116,7 @@ private fun MainErrorContent(throwable: Throwable, onRetryClick: () -> Unit) {
                 modifier = Modifier.padding(top = 8.dp),
                 onClick = onRetryClick
             ) {
-                Text(text = "Retry")
+                Text(text = stringResource(id = R.string.retry))
             }
         }
     }
@@ -141,12 +147,14 @@ private fun MainContent(current: Forecast, forecast: List<Forecast>, onChangeThe
                         .align(Alignment.BottomCenter)
                 ) {
                     Text(
-                        text = "Next days",
+                        text = stringResource(id = R.string.next_days),
                         style = MaterialTheme.typography.h2,
                         modifier = Modifier.padding(start = 8.dp, bottom = 8.dp)
                     )
                     LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag(tag = stringResource(id = R.string.tag_next_days)),
                         contentPadding = PaddingValues(all = 2.dp)
                     ) {
                         items(forecast) {
@@ -170,38 +178,60 @@ private fun MainWeather(forecast: Forecast, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = forecast.date.dayName,
-                style = MaterialTheme.typography.h2,
-                modifier = Modifier.padding(top = 16.dp),
-            )
-            Text(
-                text = forecast.date.formattedDate,
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-            Icon(
-                painter = painterResource(id = forecast.condition.image),
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .size(200.dp)
-                    .padding(vertical = 4.dp),
-                contentDescription = forecast.condition.description,
-            )
-            Text(
-                text = forecast.condition.description,
-                style = MaterialTheme.typography.h1,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
+                    .fillMaxWidth()
+                    .semantics {
+                        contentDescription = forecast.date.contentDescription
+                    }
+            ) {
+                Text(
+                    text = forecast.date.dayName,
+                    style = MaterialTheme.typography.h2,
+                    modifier = Modifier.padding(top = 16.dp),
+                )
+                Text(
+                    text = forecast.date.formattedDate,
+                    style = MaterialTheme.typography.h3,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics(mergeDescendants = true) {}
+            ) {
+                Icon(
+                    painter = painterResource(id = forecast.condition.image),
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(vertical = 4.dp),
+                    contentDescription = forecast.condition.description,
+                )
+                Text(
+                    text = forecast.condition.description,
+                    style = MaterialTheme.typography.h1,
+                    modifier = Modifier.padding(vertical = 8.dp),
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun MainTemperature(modifier: Modifier = Modifier, forecast: Forecast) {
+    val cdTemperature = stringResource(id = R.string.cd_current_temperature, forecast.current) +
+        stringResource(id = R.string.cd_min_max_temperature, forecast.min, forecast.max)
+
     Card(
-        modifier = modifier
-            .clip(shape = MaterialTheme.shapes.medium),
         elevation = 4.dp,
+        modifier = modifier
+            .clip(shape = MaterialTheme.shapes.medium)
+            .semantics(mergeDescendants = true) {
+                contentDescription = cdTemperature
+            },
     ) {
         Row(
             modifier = Modifier
@@ -211,7 +241,7 @@ private fun MainTemperature(modifier: Modifier = Modifier, forecast: Forecast) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Text(
-                text = "${forecast.current}ºC",
+                text = stringResource(R.string.degrees, forecast.current),
                 fontSize = 40.sp,
                 style = MaterialTheme.typography.h1,
             )
@@ -220,12 +250,12 @@ private fun MainTemperature(modifier: Modifier = Modifier, forecast: Forecast) {
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "MIN",
+                        text = stringResource(R.string.min),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.width(64.dp)
                     )
                     Text(
-                        text = "${forecast.min}ºC",
+                        text = stringResource(R.string.degrees, forecast.min),
                         style = MaterialTheme.typography.h4
                     )
                 }
@@ -233,12 +263,12 @@ private fun MainTemperature(modifier: Modifier = Modifier, forecast: Forecast) {
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text = "MAX",
+                        text = stringResource(R.string.max),
                         style = MaterialTheme.typography.h5,
                         modifier = Modifier.width(64.dp)
                     )
                     Text(
-                        text = "${forecast.max}ºC",
+                        text = stringResource(R.string.degrees, forecast.max),
                         style = MaterialTheme.typography.h4
                     )
                 }
@@ -282,11 +312,11 @@ private fun ForecastItem(forecast: Forecast) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = "${forecast.min}ºC",
+                    text = stringResource(R.string.degrees, forecast.min),
                     style = MaterialTheme.typography.h4,
                 )
                 Text(
-                    text = "${forecast.max}ºC",
+                    text = stringResource(R.string.degrees, forecast.max),
                     style = MaterialTheme.typography.h4,
                 )
             }
@@ -295,11 +325,11 @@ private fun ForecastItem(forecast: Forecast) {
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = "MIN",
+                    text = stringResource(R.string.min),
                     style = MaterialTheme.typography.h5,
                 )
                 Text(
-                    text = "MAX",
+                    text = stringResource(R.string.max),
                     style = MaterialTheme.typography.h5,
                 )
             }
@@ -324,7 +354,8 @@ private fun Backdrop(onChangeTheme: () -> Unit, frontLayerContent: @Composable (
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BackdropAppBar(backdropState: BackdropScaffoldState) {
-    val selectedCity = remember { mutableStateOf("New York") }
+    val city = stringResource(R.string.current_city)
+    val selectedCity = remember { mutableStateOf(city) }
     val scope = rememberCoroutineScope()
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -361,7 +392,7 @@ private fun BackdropBackContent(onChangeTheme: () -> Unit) {
         horizontalAlignment = Alignment.Start
     ) {
         Row {
-            Text("Dark mode", modifier = Modifier.width(100.dp))
+            Text(stringResource(R.string.dark_mode), modifier = Modifier.width(100.dp))
             Switch(
                 checked = darkModeSelected.value,
                 onCheckedChange = {
@@ -373,7 +404,7 @@ private fun BackdropBackContent(onChangeTheme: () -> Unit) {
     }
 }
 
-val fakeData: List<Forecast>
+private val fakeData: List<Forecast>
     get() {
         val generator = FakeDataGenerator()
         return generator.data

@@ -10,15 +10,15 @@
       the License.
       -->
     <string name="app_name">The Weather App</string>
-    <string name="retry">Retry</string>
-    <string name="loading">Loading…</string>
-    <string name="next_days">Next days</string>
+    <string name="retry">Reintentar</string>
+    <string name="loading">Cargando…</string>
+    <string name="next_days">Próximos días</string>
     <string name="min">MIN</string>
     <string name="max">MAX</string>
-    <string name="dark_mode">Dark mode</string>
+    <string name="dark_mode">Modo oscuro</string>
     <string name="degrees">%dºC</string>
-    <string name="current_city">New York</string>
-    <string name="cd_current_temperature">Current temperature: $d Celsius degrees</string>
-    <string name="cd_min_max_temperature">Min temperature: %d Celsius degrees. Max temperature: %d Celsius degrees.</string>
-    <string name="tag_next_days">Next days forecast</string>
+    <string name="current_city">Nueva York</string>
+    <string name="cd_current_temperature">Temperatura actual: $d grados Celsius</string>
+    <string name="cd_min_max_temperature">Temperatura mínima: %d grados Celsius. Temperatura máxima: %d grados Celsius.</string>
+    <string name="tag_next_days">Pronóstico para los próximos días</string>
 </resources>
