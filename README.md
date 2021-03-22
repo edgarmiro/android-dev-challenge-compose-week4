@@ -23,13 +23,16 @@ Used libraries:
 - Hilt
 - Mockk
 - Joda-Time
+
 Icon Set:
 - Charlotte de Wolfe
 - https://dribbble.com/shots/14189824-Weather-Icons-Imminent-35-Icon-Free-Download
+
 Fonts:
 - Great Vibes: https://fonts.google.com/specimen/Great+Vibes
 - Noto Serif: https://fonts.google.com/specimen/Noto+Serif
 - Lora: https://fonts.google.com/specimen/Lora
+
 Colors:
 - https://www.schemecolor.com/vintage-newspaper.php
 
