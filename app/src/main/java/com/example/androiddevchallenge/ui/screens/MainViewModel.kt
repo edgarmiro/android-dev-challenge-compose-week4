@@ -30,16 +30,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
+open class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow<WeatherUiState>(Loading)
-    val uiState: StateFlow<WeatherUiState> get() = _uiState
+    open val uiState: StateFlow<WeatherUiState> get() = _uiState
 
     init {
         getForecast()
     }
 
-    fun getForecast() {
+    open fun getForecast() {
         viewModelScope.launch {
             repository.forecast.collect { result ->
                 result.fold(
